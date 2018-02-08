@@ -150,13 +150,56 @@ int main(int argc, char **argv)
 		FT_Load_Char(ft.face, l, FT_LOAD_RENDER);
 
 		int charIndex = l - startChar;
-		for (i = 0; i < ft.face->glyph->bitmap.rows; i++)
+		if (charIndex == 0xe)
 		{
-			for (j = 0; j < ft.face->glyph->bitmap.width; j++)
+			charIndex = l - startChar;
+			__asm
+			{
+				mov eax, eax
+			}
+		}
+		float aspect = 1.0;
+		if (ft.face->glyph->bitmap.rows > ft.face->glyph->bitmap.width  && 
+			ft.face->glyph->bitmap.rows > ih
+			)
+		{
+			aspect = (float)ft.face->glyph->bitmap.rows / (float)ih;
+		}
+
+		if (ft.face->glyph->bitmap.rows < ft.face->glyph->bitmap.width  &&
+			ft.face->glyph->bitmap.width > iw
+			)
+		{
+			aspect = (float)ft.face->glyph->bitmap.width / (float)iw;
+		}
+
+		for (i = 0; i < ih  &&  i < ft.face->glyph->bitmap.rows; i++)
+		{
+			for (j = 0; j < iw && j < ft.face->glyph->bitmap.width; j++)
 			{                         //a b g r
 				unsigned int bytes = 0xFFff0000;
 				//0xFFff0000 blue  0xFF00ff00 green  0xFF0000ff red
-				k = i*g->bitmap.width + j;
+			
+				int isOver = 0;
+				int ajusti = (int)( (float)i * aspect);
+				if (ajusti > ft.face->glyph->bitmap.rows)
+				{
+					isOver = 1;
+					ajusti = ft.face->glyph->bitmap.rows;
+				}
+					
+
+
+				int ajustj = (int)((float)j * aspect);
+
+				if (ajustj > ft.face->glyph->bitmap.width)
+				{
+					ajustj = ft.face->glyph->bitmap.width;
+					isOver = 1;
+				}
+
+
+				k = /*i*/ajusti*g->bitmap.width + /*j*/ajustj;
 
 				int pastRow = charIndex / charPerRow;
 				int pastCol = charIndex % charPerRow;
@@ -164,6 +207,8 @@ int main(int argc, char **argv)
 			 
 
 				unsigned int brightness = (unsigned int)g->bitmap.buffer[k];
+				if (isOver)
+					brightness = 0;
 				brightness = brightness << 8 | brightness << 16 | brightness << 24 | brightness;
 				if ((unsigned int)g->bitmap.buffer[k] == 0xff)
 				{
