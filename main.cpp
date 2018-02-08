@@ -46,10 +46,22 @@ int main(int argc, char **argv)
 		printf("Failed to initialize freetype");
 	}
 
-	if (FT_New_Face(ft.lib, "arial.ttf", 0, &ft.face))
+	if (argc == 6)
 	{
-		printf("Problem loading fontfile %s", argv[1]);
+		if (FT_New_Face(ft.lib, argv[1], 0, &ft.face))
+		{
+			printf("Problem loading fontfile %s", argv[1]);
+		}
 	}
+	else
+	{
+		if (FT_New_Face(ft.lib, "arial.ttf", 0, &ft.face))
+		{
+			printf("Problem loading fontfile %s", argv[1]);
+		}
+	}
+
+
 
 
 	// arg1 每个字的长宽 
@@ -72,22 +84,22 @@ int main(int argc, char **argv)
 	int _width = 256;  // 所有字体的长宽
 	int _height = 256;
 
-	if (argc == 5)
+	if (argc == 6)
 	{
 		char * end = NULL;
-		iw = ih =		   strtol(argv[1], &end, 10);
-		_width = _height = strtol(argv[2], &end, 10);
+		iw = ih =		   strtol(argv[1+1], &end, 10);
+		_width = _height = strtol(argv[2 + 1], &end, 10);
 
 
-		if(argv[3][1] == 'x')
-			startChar = strtol(argv[3], &end, 16 );
+		if(argv[3 + 1][1] == 'x')
+			startChar = strtol(argv[3 + 1], &end, 16 );
 		else 
-			startChar = strtol(argv[3], &end, 10);
+			startChar = strtol(argv[3 + 1], &end, 10);
 
-		if (argv[4][1] == 'x')
-			endChar = strtol(argv[4], &end, 16);
+		if (argv[4 + 1][1] == 'x')
+			endChar = strtol(argv[4 + 1], &end, 16);
 		else
-			endChar = strtol(argv[4], &end, 10);
+			endChar = strtol(argv[4 + 1], &end, 10);
 
 		
 	}
