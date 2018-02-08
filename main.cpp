@@ -72,7 +72,6 @@ int main(int argc, char **argv)
 	int _width = 256;  // 所有字体的长宽
 	int _height = 256;
 
-	 
 	if (argc == 5)
 	{
 		char * end = NULL;
